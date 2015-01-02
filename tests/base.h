@@ -36,7 +36,10 @@ using test_set = std::tuple<std::string,std::vector<test_t>>;
 struct NoCopy {
 	NoCopy() = default;
 	NoCopy(const NoCopy&) = delete;
-	NoCopy(NoCopy&&) = default;
+	NoCopy(NoCopy&& rhs) :
+		property(rhs.property)
+	{
+	}
 	explicit NoCopy(int n) : property(n) {}
 
 	int property;

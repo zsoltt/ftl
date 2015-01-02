@@ -26,6 +26,8 @@
 #include <type_traits>
 #include <cstddef>
 
+#include "ftl-config.h"
+
 namespace ftl {
 	/**
 	 * \mainpage

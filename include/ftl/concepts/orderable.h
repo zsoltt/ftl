@@ -94,7 +94,7 @@ namespace ftl {
 	struct Eq {
 		static constexpr bool value = has_eq<E>::value && has_neq<E>::value;
 
-		constexpr operator bool() const noexcept {
+		constexpr_operator operator bool() const noexcept_operator{
 			return value;
 		}
 	};
@@ -121,7 +121,7 @@ namespace ftl {
 		static constexpr bool value =
 			Eq<Ord>() && has_lt<Ord>::value && has_gt<Ord>::value;
 
-		constexpr operator bool() const noexcept {
+		constexpr_operator operator bool() const noexcept_operator{
 			return value;
 		}
 	};

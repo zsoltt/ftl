@@ -24,6 +24,7 @@
 #define FTL_BASIC_CONCEPTS_H
 
 #include <type_traits>
+#include "ftl/ftl-config.h"
 
 namespace ftl {
 	/**
@@ -96,7 +97,7 @@ namespace ftl {
 	struct DefaultConstructible {
 		static constexpr bool value = std::is_default_constructible<T>::value;
 
-		constexpr operator bool() const noexcept {
+		constexpr_operator operator bool() const noexcept_operator{
 			return value;
 		}
 	};
@@ -150,7 +151,7 @@ namespace ftl {
 	struct MoveConstructible {
 		static constexpr bool value = std::is_move_constructible<T>::value;
 
-		constexpr operator bool() const noexcept {
+		constexpr_operator operator bool() const noexcept_operator{
 			return value;
 		}
 	};
@@ -205,7 +206,7 @@ namespace ftl {
 	struct CopyConstructible {
 		static constexpr bool value = std::is_copy_constructible<T>::value;
 
-		constexpr operator bool() const noexcept {
+		constexpr_operator operator bool() const noexcept_operator{
 			return value;
 		}
 	};
@@ -260,7 +261,7 @@ namespace ftl {
 	struct MoveAssignable {
 		static constexpr bool value = std::is_move_assignable<T>::value;
 
-		constexpr operator bool() const noexcept {
+		constexpr_operator operator bool() const noexcept_operator{
 			return value;
 		}
 	};
@@ -310,7 +311,7 @@ namespace ftl {
 	struct CopyAssignable {
 		static constexpr bool value = std::is_copy_assignable<T>::value;
 
-		constexpr operator bool() const noexcept {
+		constexpr_operator operator bool() const noexcept_operator{
 			return value;
 		}
 	};
@@ -338,7 +339,7 @@ namespace ftl {
 	struct Destructible {
 		static constexpr bool value = std::is_destructible<T>::value;
 
-		constexpr operator bool() const noexcept {
+		constexpr_operator operator bool() const noexcept_operator{
 			return value;
 		}
 	};
@@ -368,7 +369,7 @@ namespace ftl {
 	struct All<Pred> {
 		static constexpr bool value = true;
 
-		constexpr operator bool() const noexcept {
+		constexpr_operator operator bool() const noexcept_operator{
 			return true;
 		}
 	};
@@ -377,7 +378,7 @@ namespace ftl {
 	struct All<Pred, T, Ts...> {
 		static constexpr bool value = Pred<T>::value && All<Pred,Ts...>::value;
 
-		constexpr operator bool() const noexcept {
+		constexpr_operator operator bool() const noexcept_operator{
 			return value;
 		}
 	};

@@ -119,7 +119,7 @@ namespace ftl {
 	 */
 	struct otherwise {
 		template<typename T>
-		constexpr otherwise(T&&) noexcept {}
+		constexpr otherwise(T&&) noexcept_operator{}
 	};
 
 	namespace _dtl {
@@ -455,27 +455,27 @@ namespace ftl {
 
 		template<>
 		struct recursive_union<> {
-			void copy(size_t, const recursive_union&) noexcept {}
-			void move(size_t, recursive_union&&) noexcept {}
-			void destruct(size_t) noexcept {}
+			void copy(size_t, const recursive_union&) noexcept_operator{}
+			void move(size_t, recursive_union&&) noexcept_operator{}
+			void destruct(size_t) noexcept_operator{}
 
-			constexpr bool compare( size_t,const recursive_union&) const noexcept
+			constexpr bool compare(size_t, const recursive_union&) const noexcept_operator
 			{ return false; }
 		};
 
 		template<typename T, typename...Ts>
 		struct recursive_union<T,Ts...> {
-			constexpr recursive_union() noexcept {}
+			constexpr recursive_union() noexcept_operator{}
 
 			// Construct this element type
 			template<typename...Args>
-			explicit constexpr recursive_union(constructor<T>, Args&&...args)
+			explicit constexpr_operator recursive_union(constructor<T>, Args&&...args)
 			noexcept(std::is_nothrow_constructible<T,Args...>::value)
 			: v(std::forward<Args>(args)...) {}
 
 			// Forward construction to U
 			template<typename U, typename...Args>
-			explicit constexpr recursive_union(constructor<U> t, Args&&...args)
+			explicit constexpr_operator recursive_union(constructor<U> t, Args&&...args)
 			noexcept(
 				std::is_nothrow_constructible<
 					recursive_union<Ts...>,constructor<U>,Args...
@@ -485,14 +485,14 @@ namespace ftl {
 
 			// Construct this element using an initializer_list
 			template<typename U>
-			constexpr recursive_union(constructor<T>, std::initializer_list<U> l)
+			constexpr_operator recursive_union(constructor<T>, std::initializer_list<U> l)
 			noexcept(
 				std::is_nothrow_constructible<T,std::initializer_list<U>>::value
 			) : v(l) {}
 
 			// Forward construction using initializer_list to U
 			template<typename U, typename V>
-			constexpr recursive_union(
+			constexpr_operator recursive_union(
 					constructor<U> t, std::initializer_list<V> l
 			)
 			noexcept(
@@ -551,14 +551,30 @@ namespace ftl {
 			}
 
 			constexpr bool compare(size_t i, const recursive_union& rhs) const
-			noexcept {
+			noexcept_operator{
 				return i == 0 ? v == rhs.v : r.compare(i-1, rhs.r);
 			}
 
-			union {
+			template<bool, typename T1, typename T2>
+			struct is_cond {
+				typedef T1 type;
+			};
+
+			template<typename T1, typename T2>
+			struct is_cond<false, T1, T2> {
+				typedef T2 type;
+			};
+
+			template<typename T1, typename T2>
+			struct largest {
+				typedef typename is_cond< (sizeof(T1)>sizeof(T2)), T1, T2>::type type;
+			};
+
+			char u[sizeof(largest<T, recursive_union<Ts...>>::type)];
+			/*union {
 				T v;
 				recursive_union<Ts...> r;
-			};
+			};*/
 		};
 
 		template<size_t I, typename...Ts>
@@ -668,7 +684,7 @@ namespace ftl {
 		 * \endcode
 		 */
 		template<typename T>
-		constexpr bool is() const noexcept {
+		constexpr bool is() const noexcept_operator{
 			return cons == index_of<T,Ts...>::value;
 		}
 
@@ -685,7 +701,7 @@ namespace ftl {
 		 * \endcode
 		 */
 		template<size_t I>
-		constexpr bool isTypeAt() const noexcept {
+		constexpr bool isTypeAt() const noexcept_operator{
 			return cons == I;
 		}
 
@@ -874,14 +890,14 @@ namespace ftl {
 		public:
 			template<typename...Ts>
 			static constexpr size_t activeIndex(const sum_type<Ts...>& u)
-			noexcept {
+			noexcept_operator{
 				return u.cons;
 			}
 
 			template<typename...Ts>
 			static constexpr bool compareAt(size_t i,
 					const sum_type<Ts...>& a, const sum_type<Ts...>& b
-			) noexcept
+			) noexcept_operator
 			{
 				return a.data.compare(i, b.data);
 			}
