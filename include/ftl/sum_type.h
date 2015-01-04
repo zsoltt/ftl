@@ -29,6 +29,7 @@
 #include "type_functions.h"
 #include "concepts/basic.h"
 #include "concepts/orderable.h"
+#include "ftl/ftl-config.h"
 
 namespace ftl {
 
@@ -237,17 +238,18 @@ namespace ftl {
 
 		template<size_t I, typename T, typename...Ts>
 		struct union_indexer {
-			static constexpr auto ref(recursive_union<T,Ts...>& u)
+
+			static constexpr_auto auto ref(recursive_union<T, Ts...>& u)
+				-> decltype(union_indexer<I - 1, Ts...>::ref(u.r)) {
+				return union_indexer<I - 1, Ts...>::ref(u.r);
+			}
+
+			static constexpr_auto auto ref(const recursive_union<T,Ts...>& u)
 			-> decltype(union_indexer<I-1,Ts...>::ref(u.r)) {
 				return union_indexer<I-1,Ts...>::ref(u.r);
 			}
 
-			static constexpr auto ref(const recursive_union<T,Ts...>& u)
-			-> decltype(union_indexer<I-1,Ts...>::ref(u.r)) {
-				return union_indexer<I-1,Ts...>::ref(u.r);
-			}
-
-			static constexpr auto ptr(recursive_union<T,Ts...>& u)
+			static constexpr_auto auto ptr(recursive_union<T,Ts...>& u)
 			-> decltype(union_indexer<I-1,Ts...>::ptr(u.r)) {
 				return union_indexer<I-1,Ts...>::ptr(u.r);
 			}
@@ -550,7 +552,7 @@ namespace ftl {
 				}
 			}
 
-			constexpr bool compare(size_t i, const recursive_union& rhs) const
+			constexpr_auto bool compare(size_t i, const recursive_union& rhs) const
 			noexcept {
 				return i == 0 ? v == rhs.v : r.compare(i-1, rhs.r);
 			}
@@ -624,7 +626,7 @@ namespace ftl {
 		)
 		: data(t, std::forward<Args>(args)...)
 		, cons(index_of<T,Ts...>::value) {}
-
+		
 		/**
 		 * Construct as an instance of `T`, using an initializer_list.
 		 *
@@ -984,7 +986,7 @@ namespace ftl {
 
 	template<
 			typename...Ts,
-			typename = typename std::enable_if<All<Eq,Ts...>{}>::type
+			typename = typename std::enable_if<All<Eq,Ts...>::value>::type
 	>
 	bool operator== (const sum_type<Ts...>& a, const sum_type<Ts...>& b) {
 		size_t i1 = ::ftl::_dtl::sum_type_accessor::activeIndex(a);

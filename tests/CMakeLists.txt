@@ -46,7 +46,7 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 
 	# As soon as visual studio supports the required feature set, hopefully
-	message(FATAL_ERROR "${PROJECT_NAME} is not yet compatible with visual studio")
+	#message(FATAL_ERROR "${PROJECT_NAME} is not yet compatible with visual studio")
 
 else()
 
